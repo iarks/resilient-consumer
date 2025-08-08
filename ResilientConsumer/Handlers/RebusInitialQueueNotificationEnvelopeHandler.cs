@@ -2,7 +2,6 @@
 using Rebus.Bus;
 using Rebus.Handlers;
 using ResilientConsumer.Models;
-using Wolverine;
 
 namespace ResilientConsumer.Handlers;
 
@@ -22,7 +21,7 @@ public class RebusInitialQueueNotificationEnvelopeHandler:
     public Task Handle(NotificationServiceEnvelope<string> message)
     {
         Console.ForegroundColor = _color;
-        Console.WriteLine($"Got message: {message.IncomingMessage}");
+        Console.WriteLine($"Got message at initial q handler: {message.IncomingMessage}");
         Console.ResetColor();
         return _bus.Advanced.Topics.Publish("x", message);
     }
@@ -31,7 +30,7 @@ public class RebusInitialQueueNotificationEnvelopeHandler:
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<string>> message)
     {
         Console.ForegroundColor = _color;
-        Console.WriteLine($"Got message: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.WriteLine($"Got message at initial q handler: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
         Console.ResetColor();
         return _bus.Advanced.Topics.Publish("x", message);
     }
@@ -39,42 +38,75 @@ public class RebusInitialQueueNotificationEnvelopeHandler:
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<decimal>> message)
     {
         Console.ForegroundColor = _color;
-        Console.WriteLine($"Got message: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.WriteLine($"Got message at initial q handler: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
         Console.ResetColor();
         return _bus.Advanced.Topics.Publish("y", message);
     }
 }
 
-/*
-// these handlers should execute from the topic
+// these handlers should execute from the messages coming in only from the topic, even though they have the same message type
 public class RebusTopicNotificationEnvelopeHandler : IHandleMessages<NotificationServiceEnvelope<string>>,
     IHandleMessages<NotificationServiceEnvelope<IncomingEvent<string>>>,
     IHandleMessages<NotificationServiceEnvelope<IncomingEvent<decimal>>>
 {
-    private readonly IBus _bus;
-
-    RebusTopicNotificationEnvelopeHandler(IBus bus)
-    {
-        _bus = bus;
-    }
+    private ConsoleColor _color = ConsoleColor.Cyan;
     
     public Task Handle(NotificationServiceEnvelope<string> message)
     {
-        Console.WriteLine($"Got message: {message.IncomingMessage}");
+        Console.ForegroundColor = _color;
+        Console.WriteLine($"Got message at topic consumer 1: {message.IncomingMessage}");
+        Console.ResetColor();
         return Task.CompletedTask;
     }
 
 
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<string>> message)
     {
-        Console.WriteLine($"Got message: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.ForegroundColor = _color;
+        Console.WriteLine($"Got message at topic consumer 1: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.ResetColor();
         return Task.CompletedTask;
     }
 
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<decimal>> message)
     {
-        Console.WriteLine($"Got message: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.ForegroundColor = _color;
+        Console.WriteLine($"Got message at topic consumer 1: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.ResetColor();
         return Task.CompletedTask;
     }
 }
-*/
+
+
+// these handlers should execute from the messages coming in from the topic, even though they have the same message type
+public class RebusTopicNotificationEnvelopeHandler2 : IHandleMessages<NotificationServiceEnvelope<string>>,
+    IHandleMessages<NotificationServiceEnvelope<IncomingEvent<string>>>,
+    IHandleMessages<NotificationServiceEnvelope<IncomingEvent<decimal>>>
+{
+    private ConsoleColor _color = ConsoleColor.Magenta;
+    
+    public Task Handle(NotificationServiceEnvelope<string> message)
+    {
+        Console.ForegroundColor = _color;
+        Console.WriteLine($"Got message at topic consumer 2: {message.IncomingMessage}");
+        Console.ResetColor();
+        return Task.CompletedTask;
+    }
+
+
+    public Task Handle(NotificationServiceEnvelope<IncomingEvent<string>> message)
+    {
+        Console.ForegroundColor = _color;
+        Console.WriteLine($"Got message at topic consumer 2: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.ResetColor();
+        return Task.CompletedTask;
+    }
+
+    public Task Handle(NotificationServiceEnvelope<IncomingEvent<decimal>> message)
+    {
+        Console.ForegroundColor = _color;
+        Console.WriteLine($"Got message at topic consumer 2: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
+        Console.ResetColor();
+        return Task.CompletedTask;
+    }
+}

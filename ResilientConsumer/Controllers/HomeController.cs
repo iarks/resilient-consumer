@@ -1,26 +1,21 @@
 using System.Diagnostics;
-using System.Net.Sockets;
-using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Rebus.Bus;
 using ResilientConsumer.Models;
-using Wolverine;
 
 namespace ResilientConsumer.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IMessageBus _messageBus;
     private readonly Random _random;
     private readonly IBus _bus;
 
     string internalReceiveQueueName = "ResilientConsumer_Rebus:Initial-Internal-Receive-Queue";
     
-    public HomeController(ILogger<HomeController> logger, /*IMessageBus messageBus,*/ IBus rebusBus)
+    public HomeController(ILogger<HomeController> logger, IBus rebusBus)
     {
         _logger = logger;
-//        _messageBus = messageBus;
         _bus = rebusBus;
         _random = new Random();
     }

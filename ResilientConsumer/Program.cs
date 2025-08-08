@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 string internalReceiveQueueName = "ResilientConsumer_Rebus:Initial-Internal-Receive-Queue";
+string internalReceiveExchangeName = "ResilientConsumer_Rebus:Internal-Fanout-Exchange";
 
 builder.Services.AddRebus(configure =>
 {
