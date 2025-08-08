@@ -15,6 +15,8 @@ public class HomeController : Controller
     private readonly Random _random;
     private readonly IBus _bus;
 
+    string internalReceiveQueueName = "ResilientConsumer_Rebus:Initial-Internal-Receive-Queue";
+    
     public HomeController(ILogger<HomeController> logger, /*IMessageBus messageBus,*/ IBus rebusBus)
     {
         _logger = logger;
@@ -47,7 +49,7 @@ public class HomeController : Controller
         var c = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<decimal>> { IncomingMessage = new IncomingEvent<decimal>(a, b, (decimal)c) };
         
-        await _bus.Advanced.Routing.Send("qqq", simulatedIncomingEvent);
+        await _bus.Advanced.Routing.Send(internalReceiveQueueName, simulatedIncomingEvent);
         
         //await _messageBus.EndpointFor("resilient-queue-internal:initial-consumer").InvokeAsync(simulatedIncomingEvent);
 
@@ -62,7 +64,7 @@ public class HomeController : Controller
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<string>> { IncomingMessage = new IncomingEvent<string>(a, b, "hello world") };
         //await _messageBus.EndpointFor("resilient-queue-internal:initial-consumer").InvokeAsync(simulatedIncomingEvent);
 
-        await _bus.Advanced.Routing.Send("qqq", simulatedIncomingEvent);
+        await _bus.Advanced.Routing.Send(internalReceiveQueueName, simulatedIncomingEvent);
         return View("Index");
     }
 
@@ -74,7 +76,7 @@ public class HomeController : Controller
         var simulatedIncomingEvent = new NotificationServiceEnvelope<string> { IncomingMessage = "hello world" };
         //await _messageBus.EndpointFor("resilient-queue-internal:initial-consumer").SendAsync(simulatedIncomingEvent);
 
-        await _bus.Advanced.Routing.Send("qqq", simulatedIncomingEvent);
+        await _bus.Advanced.Routing.Send(internalReceiveQueueName, simulatedIncomingEvent);
         return View("Index");
     }
 }
