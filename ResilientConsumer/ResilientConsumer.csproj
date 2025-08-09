@@ -7,13 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Npgsql" Version="9.0.3" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
       <PackageReference Include="WolverineFx" Version="4.9.1" />
+      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="4.9.1" />
       <PackageReference Include="WolverineFx.Postgresql" Version="4.9.1" />
-      <PackageReference Include="WolverineFx.RabbitMQ" Version="4.9.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Handlers\" />
     </ItemGroup>
 
 </Project>

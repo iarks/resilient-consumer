@@ -39,6 +39,11 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> PublishDecimal()
     {
+        if (!QueueNotifs.ShouldProcess)
+        {
+            throw new InvalidOperationException("Not allowed. Please try after some time");
+        }
+        
         var a = _random.Next();
         var b = _random.Next();
         var c = _random.Next();
@@ -50,6 +55,11 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> PublishString()
     {
+        if (!QueueNotifs.ShouldProcess)
+        {
+            throw new InvalidOperationException("Not allowed. Please try after some time");
+        }
+        
         var a = _random.Next();
         var b = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<string>> { IncomingMessage = new IncomingEvent<string>(a, b, "hello world") };
@@ -60,6 +70,11 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> PublishConcrete()
     {
+        if (!QueueNotifs.ShouldProcess)
+        {
+            throw new InvalidOperationException("Not allowed. Please try after some time");
+        }
+        
         var a = _random.Next();
         var b = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<string> { IncomingMessage = "hello world" };

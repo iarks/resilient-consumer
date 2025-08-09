@@ -15,15 +15,15 @@ public class WolverineInitialQueueHandler
         Console.ResetColor();
         return Task.CompletedTask;
     }
-
-
+    
+    /*
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<string>> message)
     {
         Console.ForegroundColor = _color;
         Console.WriteLine($"Got message at initial q handler: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
         Console.ResetColor();
         return Task.CompletedTask;
-    }
+    }*/
 
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<decimal>> message)
     {

@@ -19,6 +19,7 @@ public class NotificationHandlers
     
     public static void Configure(HandlerChain chain)
     {
+        /*
         chain.OnException<ArgumentException>()
             .CustomAction((runtime, lifecycle, ex) =>
             {
@@ -26,9 +27,10 @@ public class NotificationHandlers
                 Console.WriteLine($"Got exception at exception handler: {ex}");
                 logger.LogError(ex, ex.Message);
                 return ValueTask.FromException(ex);
-            }, String.Empty, InvokeResult.Stop)
+            }, String.Empty, InvokeResult.TryAgain)
             .Then
             .MoveToErrorQueue();
+            */
     }
     
     public Task Handle(NotificationServiceEnvelope<string> message)
@@ -45,7 +47,7 @@ public class NotificationHandlers
         Console.ForegroundColor = _color;
         Console.WriteLine($"Got message at initial q handler: {message.IncomingMessage!.a}, {message.IncomingMessage!.b}, {message.IncomingMessage!.c}");
         Console.ResetColor();
-        throw new ArgumentNullException("Something went wrong");
+        throw new ArgumentException("Something went wrong");
     }
 
     public Task Handle(NotificationServiceEnvelope<IncomingEvent<decimal>> message)
