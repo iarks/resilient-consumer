@@ -43,7 +43,7 @@ public class HomeController : Controller
         var b = _random.Next();
         var c = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<decimal>> { IncomingMessage = new IncomingEvent<decimal>(a, b, (decimal)c) };
-        await _bus.EndpointFor("important-q").SendAsync(simulatedIncomingEvent);
+        await _bus.PublishAsync(simulatedIncomingEvent);
         return View("Index");
     }
 
@@ -53,7 +53,7 @@ public class HomeController : Controller
         var a = _random.Next();
         var b = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<string>> { IncomingMessage = new IncomingEvent<string>(a, b, "hello world") };
-        await _bus.EndpointFor("important-q").SendAsync(simulatedIncomingEvent);
+        await _bus.PublishAsync(simulatedIncomingEvent);
         return View("Index");
     }
 
@@ -63,7 +63,7 @@ public class HomeController : Controller
         var a = _random.Next();
         var b = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<string> { IncomingMessage = "hello world" };
-        await _bus.EndpointFor("important-q").SendAsync(simulatedIncomingEvent);
+        await _bus.PublishAsync(simulatedIncomingEvent);
         return View("Index");
     }
 }
