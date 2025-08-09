@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Rebus.Bus;
 using ResilientConsumer.Models;
+using Wolverine;
 
 namespace ResilientConsumer.Controllers;
 
@@ -9,11 +9,11 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly Random _random;
-    private readonly IBus _bus;
+    private readonly IMessageBus _bus;
 
-    string internalReceiveQueueName = "ResilientConsumer_Rebus:Initial-Internal-Receive-Queue";
+    string internalReceiveQueueName = "ResilientConsumer-internal-receive-queue";
     
-    public HomeController(ILogger<HomeController> logger, IBus rebusBus)
+    public HomeController(ILogger<HomeController> logger, IMessageBus rebusBus)
     {
         _logger = logger;
         _bus = rebusBus;
@@ -43,11 +43,7 @@ public class HomeController : Controller
         var b = _random.Next();
         var c = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<decimal>> { IncomingMessage = new IncomingEvent<decimal>(a, b, (decimal)c) };
-        
-        await _bus.Advanced.Routing.Send(internalReceiveQueueName, simulatedIncomingEvent);
-        
-        //await _messageBus.EndpointFor("resilient-queue-internal:initial-consumer").InvokeAsync(simulatedIncomingEvent);
-
+        await _bus.EndpointFor("important-q").SendAsync(simulatedIncomingEvent);
         return View("Index");
     }
 
@@ -57,9 +53,7 @@ public class HomeController : Controller
         var a = _random.Next();
         var b = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<IncomingEvent<string>> { IncomingMessage = new IncomingEvent<string>(a, b, "hello world") };
-        //await _messageBus.EndpointFor("resilient-queue-internal:initial-consumer").InvokeAsync(simulatedIncomingEvent);
-
-        await _bus.Advanced.Routing.Send(internalReceiveQueueName, simulatedIncomingEvent);
+        await _bus.EndpointFor("important-q").SendAsync(simulatedIncomingEvent);
         return View("Index");
     }
 
@@ -69,9 +63,7 @@ public class HomeController : Controller
         var a = _random.Next();
         var b = _random.Next();
         var simulatedIncomingEvent = new NotificationServiceEnvelope<string> { IncomingMessage = "hello world" };
-        //await _messageBus.EndpointFor("resilient-queue-internal:initial-consumer").SendAsync(simulatedIncomingEvent);
-
-        await _bus.Advanced.Routing.Send(internalReceiveQueueName, simulatedIncomingEvent);
+        await _bus.EndpointFor("important-q").SendAsync(simulatedIncomingEvent);
         return View("Index");
     }
 }

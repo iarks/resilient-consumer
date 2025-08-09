@@ -1,39 +1,34 @@
-using Rebus.Config;
-using ResilientConsumer.Handlers;
+using JasperFx;
+using Wolverine;
+using Wolverine.ErrorHandling;
+using Wolverine.Postgresql;
+using Wolverine.RabbitMQ;
+using Wolverine.Runtime.Handlers;
+using Wolverine.Transports;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-string internalReceiveQueueName = "ResilientConsumer_Rebus:Initial-Internal-Receive-Queue";
-string internalReceiveExchangeName = "ResilientConsumer_Rebus:Internal-Fanout-Exchange";
+const string internalTransport = "wolverine_transport";
 
-builder.Services.AddRebus(configure =>
+builder.Services.AddWolverine(configure =>
 {
-    // setup a queue for handling incoming requests
-    var configurer = configure
-        .Logging(l => l.ColoredConsole())
-        .Transport(t => t.UseRabbitMq("amqp://guest:guest@localhost:5672", internalReceiveQueueName)
-            .SetPublisherConfirms(true));
-    
-    return configurer;
-});
+    configure.PersistMessagesWithPostgresql("Host=localhost;Database=wolverine;Username=postgres;Password=postgres",
+        internalTransport);
 
-builder.Services.AutoRegisterHandlersFromAssemblyOf<RebusInitialQueueNotificationEnvelopeHandler>();
+    configure.Publish().ToRabbitQueue("important-q").UseDurableOutbox().Named("important-q");
+
+    configure.OnException<Npgsql.NpgsqlException>()
+        .CustomAction((runtime, envelopeLc, ex) =>
+        {
+            runtime.Agents.AllRunningAgentUris();
+            return ValueTask.CompletedTask;
+        }, "", InvokeResult.Stop);
+});
 
 var app = builder.Build();
-
-/*
-app.Lifetime.ApplicationStarted.Register(async () =>
-{
-    await using var scope = app.Services.CreateAsyncScope();
-    var bus = scope.ServiceProvider.GetRequiredService<IBus>();
-
-    await bus.Advanced.Topics.Subscribe("x");
-    await bus.Advanced.Topics.Subscribe("y");
-});
-*/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -56,4 +51,4 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
-app.Run();
+app.RunJasperFxCommands(args);
