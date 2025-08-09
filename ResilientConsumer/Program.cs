@@ -1,10 +1,8 @@
-using JasperFx;
 using Wolverine;
 using Wolverine.ErrorHandling;
 using Wolverine.Postgresql;
 using Wolverine.RabbitMQ;
 using Wolverine.Runtime.Handlers;
-using Wolverine.Transports;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +16,19 @@ builder.Services.AddWolverine(configure =>
     configure.PersistMessagesWithPostgresql("Host=localhost;Database=wolverine;Username=postgres;Password=postgres",
         internalTransport);
 
-    configure.Publish().ToRabbitQueue("important-q").UseDurableOutbox().Named("important-q");
+    configure.UseRabbitMq(x =>
+    {
+        x.HostName = "localhost";
+        x.Port = 5672;
+        x.UserName = "guest";
+        x.Password = "guest";
+    }).UseSenderConnectionOnly().AutoProvision();
+    
+    configure
+        .Publish()
+        .ToRabbitQueue("important-q")
+        .UseDurableOutbox()
+        .Named("important-q");
 
     configure.OnException<Npgsql.NpgsqlException>()
         .CustomAction((runtime, envelopeLc, ex) =>
@@ -51,4 +61,6 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
-app.RunJasperFxCommands(args);
+//app.RunJasperFxCommands(args);
+
+app.Run();
