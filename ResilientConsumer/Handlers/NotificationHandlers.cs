@@ -19,7 +19,6 @@ public class NotificationHandlers
     
     public static void Configure(HandlerChain chain)
     {
-        /*
         chain.OnException<ArgumentException>()
             .CustomAction((runtime, lifecycle, ex) =>
             {
@@ -30,7 +29,6 @@ public class NotificationHandlers
             }, String.Empty, InvokeResult.TryAgain)
             .Then
             .MoveToErrorQueue();
-            */
     }
     
     public Task Handle(NotificationServiceEnvelope<string> message)

@@ -72,8 +72,7 @@ builder.Services.AddWolverine(configure =>
         });
     });
     
-    
-    configure.Policies.UseDurableLocalQueues();
+    //configure.Policies.UseDurableLocalQueues();
     
     configure.Policies.AddMiddleware<Scoping>(x => x.MessageType == typeof(NotificationServiceEnvelope<>));
     
